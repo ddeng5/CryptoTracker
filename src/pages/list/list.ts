@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { NavController, NavParams } from 'ionic-angular';
-
+import { Events } from 'ionic-angular';
 import { ItemDetailsPage } from '../item-details/item-details';
 
 @Component({
@@ -10,15 +10,24 @@ import { ItemDetailsPage } from '../item-details/item-details';
 })
 export class ListPage {
   icons: string[];
-  items: Array<{title: string, note: string, icon: string}>;
+  items: Array<{title: string}>;
 
-  test =0;
-
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events) {
 
     storage.get('tPairs').then((val) => {
       this.items = val;
     });
+
+
+    events.subscribe('updated-tPairs', (tPairs) => {
+      console.log(tPairs);
+      this.items = [];
+      for (let i=0; i<tPairs.length; i++) {
+        this.items.push({
+          title: tPairs[i]
+        })
+      }
+    })
 
 
     /*
@@ -37,12 +46,6 @@ export class ListPage {
     */
 
 
-  }
-
-  getNotification(evt) {
-    console.log(this.test);
-    this.test = 5;
-    console.log(this.test);
   }
 
 
