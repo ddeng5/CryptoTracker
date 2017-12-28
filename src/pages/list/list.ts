@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-
+import { Storage } from '@ionic/storage';
 import { NavController, NavParams } from 'ionic-angular';
 
 import { ItemDetailsPage } from '../item-details/item-details';
@@ -12,11 +12,21 @@ export class ListPage {
   icons: string[];
   items: Array<{title: string, note: string, icon: string}>;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    this.icons = ['flask', 'wifi', 'beer', 'football', 'basketball', 'paper-plane',
+  test =0;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
+
+    storage.get('tPairs').then((val) => {
+      this.items = val;
+    });
+
+
+    /*
+     this.icons = ['flask', 'wifi', 'beer', 'football', 'basketball', 'paper-plane',
     'american-football', 'boat', 'bluetooth', 'build'];
 
-    this.items = [];
+     this.items = [];
+
     for(let i = 1; i < 11; i++) {
       this.items.push({
         title: 'Item ' + i,
@@ -24,7 +34,17 @@ export class ListPage {
         icon: this.icons[Math.floor(Math.random() * this.icons.length)]
       });
     }
+    */
+
+
   }
+
+  getNotification(evt) {
+    console.log(this.test);
+    this.test = 5;
+    console.log(this.test);
+  }
+
 
   itemTapped(event, item) {
     this.navCtrl.push(ItemDetailsPage, {
