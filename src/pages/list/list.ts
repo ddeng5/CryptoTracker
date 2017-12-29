@@ -23,13 +23,12 @@ export class ListPage {
       //dont not organize data if data does not exist
       if (val != null) {
         this.items = val;
+        console.log(this.items);
         this.organizeMap();
 
         //this.load();
         console.log(this.mapOfUserData);
-        console.log("here");
         this.requestData(this.mapOfUserData);
-        console.log("end");
       }
     });
 
@@ -41,12 +40,14 @@ export class ListPage {
         this.items.push({
           tPair: tPairs[i].tPair,
           limit: tPairs[i].limit,
-          tradingAbove: tPairs[i].tradingAbove
+          tradingAbove: tPairs[i].tradingAbove,
+          icon: tPairs[i].icon
         })
       }
       this.organizeMap();
       this.requestData(this.mapOfUserData);
       console.log(this.mapOfUserData);
+      console.log(storage.get('tPairs'));
     });
   }
 

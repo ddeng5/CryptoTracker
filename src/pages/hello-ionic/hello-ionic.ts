@@ -70,8 +70,30 @@ export class HelloIonicPage {
 
     //add logic to assign crypto icons
     if (tPair == 'tBTCUSD') {
-
+      this.dataObject.icon = '../../assets/icon/Coins/btc.png';
     }
+    else if (tPair == 'tETHUSD') {
+      this.dataObject.icon = '../../assets/icon/Coins/eth.png';
+    }
+    else if (tPair == 'tDATUSD') {
+      this.dataObject.icon = '../../assets/icon/Coins/data.png';
+    }
+    else if (tPair == 'tEOSUSD') {
+      this.dataObject.icon = '../../assets/icon/Coins/eos.png';
+    }
+    else if (tPair == 'tLTCUSD') {
+      this.dataObject.icon = '../../assets/icon/Coins/ltc.png';
+    }
+    else if (tPair == 'tIOTUSD') {
+      this.dataObject.icon = '../../assets/icon/Coins/miota.png';
+    }
+    else if (tPair == 'tXRPUSD') {
+      this.dataObject.icon = '../../assets/icon/Coins/xrp.png';
+    }
+    else {
+      this.dataObject.icon = '../../assets/icon/Coins/btc.png';
+    }
+    console.log(this.dataObject);
 
     return this.dataObject;
   }

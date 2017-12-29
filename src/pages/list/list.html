@@ -10,7 +10,7 @@
 <ion-content>
   <ion-list>
     <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      <img src="../../assets/icon/Coins/btc.png" item-left/>
+      <img src="{{item.icon}}" item-left/>
       {{item.tPair}}
       <div class="item-note" item-right>
         {{item.limit}}
