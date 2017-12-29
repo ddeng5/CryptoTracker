@@ -7,7 +7,8 @@ import { ListPage } from '../pages/list/list';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-
+import { TabsPage } from "../tabs/tabs";
+import { BackgroundMode } from '@ionic-native/background-mode';
 
 
 @Component({
@@ -17,14 +18,15 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   // make HelloIonicPage the root (or first) page
-  rootPage = ListPage;
+  rootPage = TabsPage;
   pages: Array<{title: string, component: any}>;
 
   constructor(
     public platform: Platform,
     public menu: MenuController,
     public statusBar: StatusBar,
-    public splashScreen: SplashScreen
+    public splashScreen: SplashScreen,
+    public backgroundMode: BackgroundMode
   ) {
     this.initializeApp();
 
@@ -41,6 +43,8 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.backgroundMode.enable();
+      console.log(this.backgroundMode.isEnabled());
     });
   }
 
@@ -50,4 +54,6 @@ export class MyApp {
     // navigate to the new page if it is not the current page
     this.nav.setRoot(page.component);
   }
+
+
 }

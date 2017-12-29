@@ -8,17 +8,17 @@ export class BitfinexServiceProvider {
 
   public data: any;
   url = "https://api.bitfinex.com/v2/ticker/";
-  public tPair: string;
+  //public tPair: string = 'tBTCUSD';
 
   constructor(public http: Http) {
     console.log('Hello BitfinexServiceProvider Provider');
   }
 
-  setTPair(tPair) {
-    this.tPair = tPair;
-  }
+  // setTPair(tPair) {
+  //   this.tPair = tPair;
+  // }
 
-  load() {
+  load(tPair) {
     // if (this.data) {
     //   // already loaded data
     //   return Promise.resolve(this.data);
@@ -29,7 +29,7 @@ export class BitfinexServiceProvider {
       // We're using Angular HTTP provider to request the data,
       // then on the response, it'll map the JSON data to a parsed JS object.
       // Next, we process the data and resolve the promise with the new data.
-      this.http.get(this.url + this.tPair)
+      this.http.get(this.url + tPair)
         .map((res: Response) => res.json())
         .subscribe(data => {
           //data[6] gets the last traded price

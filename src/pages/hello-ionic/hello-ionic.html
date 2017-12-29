@@ -28,6 +28,12 @@
     <ion-input [(ngModel)]='limit' type="number" placeholder="Input trading pair limit here"></ion-input>
   </ion-item>
 
+  <ion-item>
+    <ion-label>If limit price is above trading price, check here:</ion-label>
+    <ion-checkbox [(ngModel)]="tradingAbove"></ion-checkbox>
+  </ion-item>
+
+
   <br><br>
   <button ion-button (click)="changeTPair($event)">Submit</button>
 
