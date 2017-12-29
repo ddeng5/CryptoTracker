@@ -11,11 +11,14 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
   templateUrl: 'list.html'
 })
 export class ListPage {
-  icons: string[];
   items: any;
   data: any;
   timer: number = 5000;
   mapOfUserData = new Map<string, Set<number>>();
+  map = new Map()
+    .set("A",1)
+    .set("B",2)
+    .set("C",3);
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events, public bitfinexServiceProvider: BitfinexServiceProvider, public localNotifications: LocalNotifications) {
 
@@ -59,12 +62,14 @@ export class ListPage {
     */
 
     //this.load();
-
-
+  console.log(this.mapOfUserData);
+  this.requestData(this.mapOfUserData);
+  console.log("end");
   }
 
   //map limit values to their respective trading pairs
   organizeMap(){
+    /*
     for (let i = 0; i < this.items.length; i++) {
       if (this.mapOfUserData.has(this.items[i].tPair)) {
         this.mapOfUserData.get(this.items[i].tPair).add(this.items[i].limit);
@@ -76,6 +81,7 @@ export class ListPage {
       }
     }
     this.storage.set('mapOfUserData', this.mapOfUserData);
+    */
   }
 
 
@@ -98,6 +104,16 @@ export class ListPage {
   //compare the values requested from Bitfinex API with the user inputted values
   checkLimits() {
 
+  }
+
+
+  //obtain unique trading pairs to send to Bitfinex Service to request for data
+  requestData(map) {
+    console.log(this.map.keys());
+    for(let key of Array.from(map.keys()) ) {
+      map.set(key + 'TradingPrice', this.load(key));
+      console.log(map);
+    }
   }
 
 
