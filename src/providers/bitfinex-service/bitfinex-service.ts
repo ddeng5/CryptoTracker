@@ -12,6 +12,9 @@ export class BitfinexServiceProvider {
 
   constructor(public http: Http) {
     console.log('Hello BitfinexServiceProvider Provider');
+    console.log(this.load('tBTCUSD').then(data =>{
+      console.log(data);
+    }));
   }
 
   // setTPair(tPair) {

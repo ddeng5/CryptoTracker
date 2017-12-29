@@ -13,18 +13,21 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
 export class ListPage {
   items: any;
   data: any;
-  timer: number = 5000;
-  mapOfUserData = new Map<string, Set<number>>();
-  map = new Map()
-    .set("A",1)
-    .set("B",2)
-    .set("C",3);
+  timer: number = 10000;
+  mapOfUserData = new Map<string, Array<number>>();
+
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events, public bitfinexServiceProvider: BitfinexServiceProvider, public localNotifications: LocalNotifications) {
 
     storage.get('tPairs').then((val) => {
       this.items = val;
       this.organizeMap();
+
+      //this.load();
+      console.log(this.mapOfUserData);
+      console.log("here");
+      this.requestData(this.mapOfUserData);
+      console.log("end");
     });
 
 
@@ -41,64 +44,36 @@ export class ListPage {
       this.organizeMap();
       console.log(this.mapOfUserData);
     });
-
-
-
-
-
-    /*
-     this.icons = ['flask', 'wifi', 'beer', 'football', 'basketball', 'paper-plane',
-    'american-football', 'boat', 'bluetooth', 'build'];
-
-     this.items = [];
-
-    for(let i = 1; i < 11; i++) {
-      this.items.push({
-        title: 'Item ' + i,
-        note: 'This is item #' + i,
-        icon: this.icons[Math.floor(Math.random() * this.icons.length)]
-      });
-    }
-    */
-
-    //this.load();
-  console.log(this.mapOfUserData);
-  this.requestData(this.mapOfUserData);
-  console.log("end");
   }
 
+
   //map limit values to their respective trading pairs
-  organizeMap(){
-    /*
+  organizeMap() {
     for (let i = 0; i < this.items.length; i++) {
       if (this.mapOfUserData.has(this.items[i].tPair)) {
-        this.mapOfUserData.get(this.items[i].tPair).add(this.items[i].limit);
+        this.mapOfUserData.get(this.items[i].tPair).push(this.items[i].limit);
       }
       else {
-        let set = new Set()
-        set.add(this.items[i].limit);
-        this.mapOfUserData.set(this.items[i].tPair, set);
+        let array = new Array();
+        array.push(this.items[i].limit);
+        this.mapOfUserData.set(this.items[i].tPair, array);
       }
+
+      this.storage.set('mapOfUserData', this.mapOfUserData);
     }
-    this.storage.set('mapOfUserData', this.mapOfUserData);
-    */
   }
 
 
   //call the bitfinex service to request the API
-  load(tPair) {
-    try {
-      setInterval(() => {
-        this.bitfinexServiceProvider.load(tPair)
+  load(tPair): Promise<any> {
+        return new Promise(resolve => {
+          this.bitfinexServiceProvider.load(tPair)
           .then(data => {
-            this.data = data;
+            resolve(data);
           });
-      }, this.timer);
-    }
-    catch(e) {
-      throw e;
-    }
+      });
   }
+
 
 
   //compare the values requested from Bitfinex API with the user inputted values
@@ -109,10 +84,13 @@ export class ListPage {
 
   //obtain unique trading pairs to send to Bitfinex Service to request for data
   requestData(map) {
-    console.log(this.map.keys());
+    console.log(map.keys());
     for(let key of Array.from(map.keys()) ) {
-      map.set(key + 'TradingPrice', this.load(key));
-      console.log(map);
+      this.load(key).then(data => {
+        console.log(data);
+        map.set(key + 'TradingPrice', data);
+        console.log(map);
+      })
     }
   }
 
