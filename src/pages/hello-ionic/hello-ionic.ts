@@ -34,22 +34,6 @@ export class HelloIonicPage {
     this.tradingAbove = false;
   }
 
-
-  // load() {
-  //   try {
-  //     setInterval(() => {
-  //       this.BitfinexService.load()
-  //         .then(data => {
-  //           this.data = data;
-  //         });
-  //     }, this.timer);
-  //   }
-  //   catch(e) {
-  //     throw e;
-  //   }
-  // }
-
-
   //should add code to check whether the added tPair already exists in our storage array
   changeTPair() {
     this.createObject(this.tPair, this.limit, this.tradingAbove);
@@ -94,7 +78,6 @@ export class HelloIonicPage {
 
   notifyMainPage(tPairs) {
     this.events.publish('updated-tPairs', tPairs);
-    console.log("wow");
   }
 
 

@@ -20,14 +20,17 @@ export class ListPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events, public bitfinexServiceProvider: BitfinexServiceProvider, public localNotifications: LocalNotifications) {
 
     storage.get('tPairs').then((val) => {
-      this.items = val;
-      this.organizeMap();
+      //dont not organize data if data does not exist
+      if (val != null) {
+        this.items = val;
+        this.organizeMap();
 
-      //this.load();
-      console.log(this.mapOfUserData);
-      console.log("here");
-      this.requestData(this.mapOfUserData);
-      console.log("end");
+        //this.load();
+        console.log(this.mapOfUserData);
+        console.log("here");
+        this.requestData(this.mapOfUserData);
+        console.log("end");
+      }
     });
 
 
@@ -42,9 +45,11 @@ export class ListPage {
         })
       }
       this.organizeMap();
+      this.requestData(this.mapOfUserData);
       console.log(this.mapOfUserData);
     });
   }
+
 
 
   //map limit values to their respective trading pairs
