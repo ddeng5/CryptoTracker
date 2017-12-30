@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { NavController, NavParams } from 'ionic-angular';
 import { Events } from 'ionic-angular';
 import { ItemDetailsPage } from '../item-details/item-details';
 import { BitfinexServiceProvider } from "../../providers/bitfinex-service/bitfinex-service";
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'page-list',
@@ -13,28 +14,33 @@ import { LocalNotifications } from '@ionic-native/local-notifications';
 export class ListPage {
   items: any;
   data: any;
-  timer: number = 10000;
+  timer = 20000;
   mapOfUserData = new Map<string, Array<number>>();
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events, public bitfinexServiceProvider: BitfinexServiceProvider, public localNotifications: LocalNotifications) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events, public bitfinexServiceProvider: BitfinexServiceProvider, public localNotifications: LocalNotifications, private ngZone: NgZone, private ref: ChangeDetectorRef) {
 
     storage.get('tPairs').then((val) => {
-      //dont not organize data if data does not exist
+      //do not organize data if data does not exist
       if (val != null) {
+        console.log(val);
         this.items = val;
-        console.log(this.items);
         this.organizeMap();
 
-        //this.load();
-        console.log(this.mapOfUserData);
-        this.requestData(this.mapOfUserData);
+        this.ngZone.run(() => {
+          let tempTimer = Observable.interval(this.timer).subscribe((val) => {
+            this.requestData(this.mapOfUserData).then((map) => {
+              console.log(map);
+              this.checkLimits(map, this.items);
+              console.log(this.items);
+            })
+          })
+        });
       }
     });
 
 
     events.subscribe('updated-tPairs', (tPairs) => {
-      console.log(tPairs[0].tPair);
       this.items = [];
       for (let i=0; i<tPairs.length; i++) {
         this.items.push({
@@ -45,12 +51,9 @@ export class ListPage {
         })
       }
       this.organizeMap();
-      this.requestData(this.mapOfUserData);
-      console.log(this.mapOfUserData);
-      console.log(storage.get('tPairs'));
     });
-  }
 
+  }
 
 
   //map limit values to their respective trading pairs
@@ -83,21 +86,39 @@ export class ListPage {
 
 
   //compare the values requested from Bitfinex API with the user inputted values
-  checkLimits() {
-
+  checkLimits(mapOfUserData, items) {
+    let i = items.length;
+      while(i--) {
+        console.log(items);
+        let rtVal = mapOfUserData.get(items[i].tPair + 'TradingPrice');
+        if (rtVal > items[i].limit && items[i].tradingAbove == true) {
+          console.log("alert, " + items[i].limit + "surpassed limit upwards");
+          items.splice(i, 1);
+          this.storage.set('tPairs', this.items)
+        }
+        else if (rtVal < items[i].limit && items[i].tradingAbove == false) {
+          console.log("alert, " + items[i].limit + "dropped below limit price");
+          items.splice(i, 1);
+          this.storage.set('tPairs', this.items);
+        }
+      }
+      console.log(this.items);
   }
 
 
   //obtain unique trading pairs to send to Bitfinex Service to request for data
-  requestData(map) {
-    console.log(map.keys());
-    for(let key of Array.from(map.keys()) ) {
-      this.load(key).then(data => {
-        console.log(data);
-        map.set(key + 'TradingPrice', data);
-        console.log(map);
-      })
-    }
+  requestData(map): Promise<any>{
+    return new Promise((resolve) => {
+      for(let key of Array.from(map.keys()) ) {
+        this.load(key).then(data => {
+          console.log(data);
+          let array = new Array();
+          array.push(data);
+          map.set(key + 'TradingPrice', array);
+          resolve(map);
+        })
+      }
+    })
   }
 
 

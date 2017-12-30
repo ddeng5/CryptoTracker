@@ -13,10 +13,6 @@ import { LocalNotifications } from "@ionic-native/local-notifications";
 
 export class HelloIonicPage {
 
-  public data: any;
-
-  //timer for refreshing requests on bitfinex API
-  public timer = 5000;
   //global variable to store user selected trading pair
   public tPair: string;
   //global list of tPairs;
