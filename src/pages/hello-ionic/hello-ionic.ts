@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import {BitfinexServiceProvider} from '../../providers/bitfinex-service/bitfinex-service';
 import { Storage } from '@ionic/storage';
 import { Events } from 'ionic-angular';
@@ -34,8 +34,6 @@ export class HelloIonicPage {
   changeTPair() {
     this.createObject(this.tPair, this.limit, this.tradingAbove);
 
-    //this.BitfinexService.setTPair(this.tPair);
-
     //try to get trading pairs but will return an error if no previous pairing so catch error, set tPairs to empty array and add to that array
     this.storage.get('tPairs').then(val => {
       this.tPairs = val;
@@ -59,6 +57,7 @@ export class HelloIonicPage {
     });
   }
 
+  //could rewrite to return the created object as opposed to changing variables in this class
   createObject(tPair, limit, tradingAbove) {
     this.dataObject.tPair = tPair;
     this.dataObject.limit = limit;
@@ -102,6 +101,8 @@ export class HelloIonicPage {
   reset() {
     this.storage.clear().then(() => {
       console.log("Reset storage successful");
+    }).then(() => {
+      this.events.publish('updated-tPairs', []);
     });
   }
 }

@@ -14,20 +14,21 @@ import { Observable } from "rxjs";
 export class ListPage {
   items: any;
   data: any;
-  timer = 20000;
+  timer = 5000;
   mapOfUserData = new Map<string, Array<number>>();
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events, public bitfinexServiceProvider: BitfinexServiceProvider, public localNotifications: LocalNotifications, private ngZone: NgZone, private ref: ChangeDetectorRef) {
-
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public events: Events, public bitfinexServiceProvider: BitfinexServiceProvider, public localNotifications: LocalNotifications, private ngZone: NgZone) {
     storage.get('tPairs').then((val) => {
+      console.log(val);
       //do not organize data if data does not exist
       if (val != null) {
-        console.log(val);
+        console.log("trick part " + val);
         this.items = val;
         this.organizeMap();
 
         this.ngZone.run(() => {
+          console.log("in the zone");
           let tempTimer = Observable.interval(this.timer).subscribe((val) => {
             this.requestData(this.mapOfUserData).then((map) => {
               console.log(map);
@@ -56,6 +57,7 @@ export class ListPage {
   }
 
 
+
   //map limit values to their respective trading pairs
   organizeMap() {
     for (let i = 0; i < this.items.length; i++) {
@@ -70,6 +72,7 @@ export class ListPage {
 
       this.storage.set('mapOfUserData', this.mapOfUserData);
     }
+    console.log("done organizing");
   }
 
 
@@ -93,11 +96,23 @@ export class ListPage {
         let rtVal = mapOfUserData.get(items[i].tPair + 'TradingPrice');
         if (rtVal > items[i].limit && items[i].tradingAbove == true) {
           console.log("alert, " + items[i].limit + "surpassed limit upwards");
+
+          //send local notification to phone
+          this.localNotifications.schedule({
+            id: 1,
+            text: ('alert, ' + items[i].limit + 'surpassed limit upwards')
+          });
           items.splice(i, 1);
-          this.storage.set('tPairs', this.items)
+          this.storage.set('tPairs', this.items);
         }
         else if (rtVal < items[i].limit && items[i].tradingAbove == false) {
           console.log("alert, " + items[i].limit + "dropped below limit price");
+
+          //send local notification to phone
+          this.localNotifications.schedule({
+            id: 1,
+            text: ('alert, '  + items[i].limit + ' dropped below limit price')
+          });
           items.splice(i, 1);
           this.storage.set('tPairs', this.items);
         }
